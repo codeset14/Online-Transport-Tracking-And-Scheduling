@@ -1,14 +1,25 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import { COLORS } from '../../constants/colors';
+import axios from 'axios';
+
+const BASE_URL = 'http://YOUR_BACKEND_IP:PORT';
 
 export default function UserLogin({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const login = () => {
+  const login = async () => {
     if (!email.includes('@') || !password) return alert('Enter valid credentials');
-    navigation.navigate('UserDashboard');
+
+    try {
+      const res = await axios.post(`${BASE_URL}/api/user/login`, { email, password });
+      if (res.data.success) navigation.navigate('UserDashboard', { user: res.data.user });
+      else alert(res.data.message || 'Invalid credentials');
+    } catch (err) {
+      console.error(err);
+      alert('Login failed');
+    }
   };
 
   return (

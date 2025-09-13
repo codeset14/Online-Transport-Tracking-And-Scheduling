@@ -1,14 +1,25 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import { COLORS } from '../../constants/colors';
+import axios from 'axios';
+
+const BASE_URL = 'http://YOUR_BACKEND_IP:PORT';
 
 export default function DriverLogin({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const login = () => {
-    if (!email.includes('@') || !password) return alert('Enter valid credentials');
-    navigation.navigate('DriverDashboard');
+  const login = async () => {
+    if (!email || !password) return alert('Enter valid credentials');
+
+    try {
+      const res = await axios.post(`${BASE_URL}/api/driver/login`, { email, password });
+      if (res.data.success) navigation.navigate('DriverDashboard', { driver: res.data.driver });
+      else alert(res.data.message || 'Invalid credentials');
+    } catch (err) {
+      console.error(err);
+      alert('Login failed');
+    }
   };
 
   return (
@@ -22,7 +33,7 @@ export default function DriverLogin({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex:1, padding:16, backgroundColor: COLORS.background, justifyContent:'center' },
-  title: { fontSize:24, fontWeight:'bold', marginBottom:16, color: COLORS.user },
-  input: { borderWidth:1, borderColor:'#ccc', borderRadius:8, padding:12, marginBottom:12 }
+  container: { flex: 1, padding: 16, backgroundColor: COLORS.background, justifyContent: 'center' },
+  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 16, color: COLORS.driver },
+  input: { borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12, marginBottom: 12 },
 });

@@ -1,34 +1,56 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, Button } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Button, FlatList, StyleSheet } from 'react-native';
 import { COLORS } from '../../constants/colors';
+import axios from 'axios';
 
-export default function DriverDashboard({ navigation }) {
-  const [busNumber, setBusNumber] = useState('');
+const BASE_URL = 'http://YOUR_BACKEND_IP:PORT';
 
-  const trackBus = () => {
-    if (!busNumber) return alert('Enter Bus Number');
-    navigation.navigate('MapScreen', { busNumber });
+export default function AdminDashboard() {
+  const [buses, setBuses] = useState([]);
+
+  useEffect(() => {
+    // fetch all buses from backend
+    const fetchBuses = async () => {
+      try {
+        const res = await axios.get(`${BASE_URL}/api/admin/buses`);
+        setBuses(res.data);
+      } catch (err) {
+        console.error(err);
+        alert('Error fetching buses');
+      }
+    };
+    fetchBuses();
+  }, []);
+
+  const deleteBus = async (busId) => {
+    try {
+      await axios.delete(`${BASE_URL}/api/admin/bus/${busId}`);
+      setBuses((prev) => prev.filter((b) => b.id !== busId));
+    } catch (err) {
+      console.error(err);
+      alert('Failed to delete bus');
+    }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Driver Dashboard</Text>
-      <TextInput
-        placeholder="Enter Bus Number"
-        style={styles.input}
-        value={busNumber}
-        onChangeText={setBusNumber}
+      <Text style={styles.title}>Admin Dashboard</Text>
+      <FlatList
+        data={buses}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <View style={styles.busItem}>
+            <Text>{item.name}</Text>
+            <Button title="Delete" color="red" onPress={() => deleteBus(item.id)} />
+          </View>
+        )}
       />
-      <View style={styles.buttonContainer}>
-        <Button title="Track Bus" onPress={trackBus} color={COLORS.driver} />
-      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex:1, padding:16, backgroundColor: COLORS.background },
-  title: { fontSize:24, fontWeight:'bold', marginBottom:16, color: COLORS.driver },
-  input: { borderWidth:1, borderColor:'#ccc', borderRadius:8, padding:12, marginBottom:12 },
-  buttonContainer: { marginVertical:8 }
+  container: { flex: 1, padding: 16, backgroundColor: COLORS.background },
+  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 16, color: COLORS.primary },
+  busItem: { flexDirection: 'row', justifyContent: 'space-between', padding: 12, borderBottomWidth: 1, borderColor: '#ccc' },
 });

@@ -12,8 +12,8 @@ import DriverDashboard from './app/screens/DriverDashboard';
 import AdminDashboard from './app/screens/AdminDashboard';
 import BookTicket from './app/screens/BookTicket';
 
-// Components
-import MapScreen from './components/MapScreen';
+// Updated MapScreen import (backend-ready)
+import MapScreen from './app/screens/MapScreen'; // <-- make sure path points here
 
 const Stack = createNativeStackNavigator();
 

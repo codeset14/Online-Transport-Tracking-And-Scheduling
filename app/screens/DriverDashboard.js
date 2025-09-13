@@ -1,13 +1,32 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, Button } from 'react-native';
+import axios from 'axios';
 import { COLORS } from '../../constants/colors';
+
+const BASE_URL = 'http://YOUR_BACKEND_IP:PORT'; // replace with actual backend
 
 export default function DriverDashboard({ navigation }) {
   const [busNumber, setBusNumber] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const trackBus = () => {
+  const trackBus = async () => {
     if (!busNumber) return alert('Enter Bus Number');
-    navigation.navigate('MapScreen', { busNumber });
+
+    setLoading(true);
+    try {
+      // Validate or fetch driver info
+      const response = await axios.get(`${BASE_URL}/api/driver/bus/${busNumber}`);
+      if (response.data.exists) {
+        navigation.navigate('MapScreen', { busNumber });
+      } else {
+        alert('Bus not found!');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error fetching bus info');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -20,7 +39,12 @@ export default function DriverDashboard({ navigation }) {
         onChangeText={setBusNumber}
       />
       <View style={styles.buttonContainer}>
-        <Button title="Track Bus" onPress={trackBus} color={COLORS.driver} />
+        <Button
+          title={loading ? 'Checking...' : 'Track Bus'}
+          onPress={trackBus}
+          color={COLORS.driver}
+          disabled={loading}
+        />
       </View>
     </View>
   );

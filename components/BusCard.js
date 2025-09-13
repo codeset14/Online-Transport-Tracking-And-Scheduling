@@ -8,6 +8,7 @@ export default function BusCard({ bus, onSelect }) {
       <Text style={styles.text}>Bus: {bus.name}</Text>
       <Text style={styles.text}>Seats: {bus.seats}</Text>
       <Text style={styles.text}>ETA: {bus.eta} min</Text>
+      {bus.id && <Text style={styles.text}>ID: {bus.id}</Text>} {/* optional backend ID */}
     </TouchableOpacity>
   );
 }
