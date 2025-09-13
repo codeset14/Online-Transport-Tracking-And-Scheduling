@@ -1,0 +1,6 @@
+id,route_name,source,destination,distance_km,estimated_duration_min,fare,stops,created_at,updated_at
+1,Mumbai Express,Mumbai,Pune,150.5,180,250,"[""Lonavala"", ""Khandala"", ""Talegaon""]",2024-01-01T00:00:00,2024-01-01T00:00:00
+2,Delhi Route,Delhi,Gurgaon,30.2,60,80,"[""Cyber City"", ""Udyog Vihar""]",2024-01-01T00:00:00,2024-01-01T00:00:00
+3,Bangalore Express,Bangalore,Mysore,145.8,210,300,"[""Mandya"", ""Srirangapatna""]",2024-01-01T00:00:00,2024-01-01T00:00:00
+4,Chennai Route,Chennai,Pondicherry,162.3,240,350,"[""Mahabalipuram"", ""Tindivanam""]",2024-01-01T00:00:00,2024-01-01T00:00:00
+5,Kolkata Express,Kolkata,Durgapur,165.4,200,280,"[""Asansol"", ""Andal""]",2024-01-01T00:00:00,2024-01-01T00:00:00

@@ -1,0 +1,4 @@
+id,user_id,bus_id,route_id,seat_number,booking_date,travel_date,fare,status,payment_status,created_at,updated_at
+TTS20240101120000,4,1,1,A1,2024-01-01,2024-01-05,250,confirmed,paid,2024-01-01T12:00:00,2024-01-01T12:00:00
+TTS20240101120100,5,1,1,A2,2024-01-01,2024-01-05,250,confirmed,paid,2024-01-01T12:01:00,2024-01-01T12:01:00
+TTS20240101120200,4,2,2,B1,2024-01-01,2024-01-06,80,pending,pending,2024-01-01T12:02:00,2024-01-01T12:02:00
