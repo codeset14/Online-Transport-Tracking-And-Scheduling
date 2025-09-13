@@ -6,7 +6,7 @@ import BookBusForm from '../../components/BookBusForm';
 import axios from 'axios';
 
 // Backend base URL
-const BASE_URL = 'http://YOUR_BACKEND_IP:PORT'; // replace with your friend's backend URL
+const BASE_URL = 'http://YOUR_BACKEND_IP:PORT'; // replace with your backend URL
 
 export default function UserDashboard({ navigation, route }) {
   const [busList, setBusList] = useState([]);
@@ -32,6 +32,7 @@ export default function UserDashboard({ navigation, route }) {
 
       if (response.data?.success) {
         setSelectedBus(response.data.bookedBus);
+        // Navigate to MapScreen in app/screens/
         navigation.navigate('MapScreen', { busNumber: response.data.bookedBus.name });
       } else {
         alert('Booking failed, try again!');
@@ -44,6 +45,7 @@ export default function UserDashboard({ navigation, route }) {
 
   const showMap = () => {
     if (!selectedBus) return alert('Please book a bus first!');
+    // Navigate to MapScreen in app/screens/
     navigation.navigate('MapScreen', { busNumber: selectedBus.name });
   };
 

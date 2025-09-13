@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
-import { COLORS } from '../constants/colors';
+import { COLORS } from '../../constants/colors';
 import axios from 'axios';
 
 const BASE_URL = 'http://YOUR_BACKEND_IP:PORT'; // replace with actual backend
