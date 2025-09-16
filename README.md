@@ -65,7 +65,8 @@ Run the server:
 bash
 Copy code
 python manage.py runserver
-Frontend Setup:
+
+### Frontend Setup:
 Navigate to the frontend directory:
 
 bash
@@ -93,7 +94,10 @@ bash
 Copy code
 npm install -g expo-cli
 Team Contribution
-This is a team project, but the entire frontend and backend development — including all core features, APIs, UI, and real-time tracking — was implemented entirely by me (Ankit Jadhav). Other team members contributed in areas such as conceptualization, testing, and documentation.
+This is a team project, but the entire frontend and backend development — including all
+core features, APIs, UI, and real-time tracking —
+was implemented entirely by me (Ankit Jadhav).
+ Other team members contributed in areas such as conceptualization, testing, and documentation.
 
 License
 This project is licensed under the MIT License. See LICENSE for details.
