@@ -66,7 +66,8 @@ bash
 Copy code
 python manage.py runserver
 
-### Frontend Setup:
+### **Frontend Setup:**
+
 Navigate to the frontend directory:
 
 bash
