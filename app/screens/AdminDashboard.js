@@ -1,19 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Button, FlatList, StyleSheet } from 'react-native';
 import { COLORS } from '../../constants/colors';
-import axios from 'axios';
+import { getBuses, cancelBooking } from '../../constants/api'; // centralized API
 
-const BASE_URL = 'http://YOUR_BACKEND_IP:PORT';
-
-export default function AdminDashboard() {
+export default function AdminDashboard({ navigation }) {
   const [buses, setBuses] = useState([]);
 
   useEffect(() => {
-    // fetch all buses from backend
     const fetchBuses = async () => {
       try {
-        const res = await axios.get(`${BASE_URL}/api/admin/buses`);
-        setBuses(res.data);
+        const data = await getBuses();
+        setBuses(data);
       } catch (err) {
         console.error(err);
         alert('Error fetching buses');
@@ -24,12 +21,16 @@ export default function AdminDashboard() {
 
   const deleteBus = async (busId) => {
     try {
-      await axios.delete(`${BASE_URL}/api/admin/bus/${busId}`);
-      setBuses((prev) => prev.filter((b) => b.id !== busId));
+      await cancelBooking(busId); // or use proper deleteBus API if exists
+      setBuses(prev => prev.filter(b => b.id !== busId));
     } catch (err) {
       console.error(err);
       alert('Failed to delete bus');
     }
+  };
+
+  const viewBusOnMap = (busNumber) => {
+    navigation.navigate('MapScreen', { busNumber, userType: 'admin' });
   };
 
   return (
@@ -41,7 +42,10 @@ export default function AdminDashboard() {
         renderItem={({ item }) => (
           <View style={styles.busItem}>
             <Text>{item.name}</Text>
-            <Button title="Delete" color="red" onPress={() => deleteBus(item.id)} />
+            <View style={{ flexDirection:'row', gap: 8 }}>
+              <Button title="Delete" color="red" onPress={() => deleteBus(item.id)} />
+              <Button title="View Map" color={COLORS.primary} onPress={() => viewBusOnMap(item.name)} />
+            </View>
           </View>
         )}
       />
@@ -52,5 +56,5 @@ export default function AdminDashboard() {
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16, backgroundColor: COLORS.background },
   title: { fontSize: 24, fontWeight: 'bold', marginBottom: 16, color: COLORS.primary },
-  busItem: { flexDirection: 'row', justifyContent: 'space-between', padding: 12, borderBottomWidth: 1, borderColor: '#ccc' },
+  busItem: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 12, borderBottomWidth: 1, borderColor: '#ccc' },
 });

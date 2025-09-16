@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
+import { searchBuses } from '../constants/api';
 import { View, TextInput, Button, StyleSheet, Platform, Text, TouchableOpacity } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import axios from 'axios';
-
-const BASE_URL = 'http://YOUR_BACKEND_IP:PORT';
 
 export default function BookBusForm({ onSearchResults }) {
   const [source, setSource] = useState('');
@@ -18,22 +16,25 @@ export default function BookBusForm({ onSearchResults }) {
   };
 
   const handleSearch = async () => {
-    if (!source || !destination || !date) {
+    if (!source.trim() || !destination.trim() || !date) {
       alert('Please fill all fields');
       return;
     }
 
     setLoading(true);
     try {
-      const response = await axios.post(`${BASE_URL}/api/buses/search`, {
-        from: source,
-        to: destination,
-        date: date.toISOString(),
-      });
+      const results = await searchBuses(source.trim(), destination.trim(), date.toISOString());
 
-      if (onSearchResults) onSearchResults(response.data);
-    } catch (error) {
-      console.error('Error searching buses:', error);
+      // Enrich each bus with route info for display
+      const enrichedResults = results.map(bus => ({
+        ...bus,
+        routeName: bus.route_name || `${bus.source} → ${bus.destination}`,
+        fare: bus.fare || 'N/A'
+      }));
+
+      if (onSearchResults) onSearchResults(enrichedResults);
+    } catch (err) {
+      console.error('Error fetching buses:', err);
       alert('Failed to fetch buses. Try again.');
     } finally {
       setLoading(false);
@@ -43,31 +44,38 @@ export default function BookBusForm({ onSearchResults }) {
   return (
     <View style={styles.container}>
       <TextInput
-        placeholder='Enter source'
+        placeholder="Enter source"
         style={styles.input}
         value={source}
         onChangeText={setSource}
       />
       <TextInput
-        placeholder='Enter destination'
+        placeholder="Enter destination"
         style={styles.input}
         value={destination}
         onChangeText={setDestination}
       />
+
       <TouchableOpacity style={styles.input} onPress={() => setShowDatePicker(true)}>
         <Text style={{ color: '#333' }}>{`Select Date: ${date.toDateString()}`}</Text>
       </TouchableOpacity>
+
       {showDatePicker && (
         <DateTimePicker
           value={date}
-          mode='date'
-          display='default'
+          mode="date"
+          display="default"
           minimumDate={new Date()}
           onChange={handleDateChange}
         />
       )}
+
       <View style={{ marginTop: 12 }}>
-        <Button title={loading ? 'Searching...' : 'Search Bus'} onPress={handleSearch} disabled={loading} />
+        <Button
+          title={loading ? "Searching..." : "Search Bus"}
+          onPress={handleSearch}
+          disabled={loading}
+        />
       </View>
     </View>
   );

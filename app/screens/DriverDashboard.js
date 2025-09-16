@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, Button } from 'react-native';
-import axios from 'axios';
 import { COLORS } from '../../constants/colors';
-
-const BASE_URL = 'http://YOUR_BACKEND_IP:PORT'; // replace with actual backend
+import { getBusById } from '../../constants/api'; // centralized API
 
 export default function DriverDashboard({ navigation }) {
   const [busNumber, setBusNumber] = useState('');
@@ -11,13 +9,11 @@ export default function DriverDashboard({ navigation }) {
 
   const trackBus = async () => {
     if (!busNumber) return alert('Enter Bus Number');
-
     setLoading(true);
     try {
-      // Validate or fetch driver info
-      const response = await axios.get(`${BASE_URL}/api/driver/bus/${busNumber}`);
-      if (response.data.exists) {
-        navigation.navigate('MapScreen', { busNumber });
+      const bus = await getBusById(busNumber);
+      if (bus) {
+        navigation.navigate('MapScreen', { busNumber: bus.name, userType: 'driver' });
       } else {
         alert('Bus not found!');
       }

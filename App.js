@@ -11,14 +11,20 @@ import UserDashboard from "./app/screens/UserDashboard";
 import DriverDashboard from "./app/screens/DriverDashboard";
 import AdminDashboard from "./app/screens/AdminDashboard";
 import BookTicket from "./app/screens/BookTicket";
-import MapScreen from "./app/screens/MapScreen"; // MapScreen is now in app/screens/
+import MapScreen from "./app/screens/MapScreen";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Landing">
+      <Stack.Navigator
+        initialRouteName="Landing"
+        screenOptions={{
+          headerTitleAlign: "center",
+          animation: "slide_from_right",
+        }}
+      >
         {/* Landing Page */}
         <Stack.Screen
           name="Landing"
@@ -27,25 +33,37 @@ export default function App() {
         />
 
         {/* Login Screens */}
-        <Stack.Screen name="UserLogin" component={UserLogin} />
-        <Stack.Screen name="DriverLogin" component={DriverLogin} />
-        <Stack.Screen name="AdminLogin" component={AdminLogin} />
+        <Stack.Screen
+          name="UserLogin"
+          component={UserLogin}
+          options={{ title: "User Login" }}
+        />
+        <Stack.Screen
+          name="DriverLogin"
+          component={DriverLogin}
+          options={{ title: "Driver Login" }}
+        />
+        <Stack.Screen
+          name="AdminLogin"
+          component={AdminLogin}
+          options={{ title: "Admin Login" }}
+        />
 
         {/* Dashboard Screens */}
         <Stack.Screen
           name="UserDashboard"
           component={UserDashboard}
-          options={{ title: "User Dashboard" }}
+          options={{ title: "User Dashboard", headerBackVisible: false }}
         />
         <Stack.Screen
           name="DriverDashboard"
           component={DriverDashboard}
-          options={{ title: "Driver Dashboard" }}
+          options={{ title: "Driver Dashboard", headerBackVisible: false }}
         />
         <Stack.Screen
           name="AdminDashboard"
           component={AdminDashboard}
-          options={{ title: "Admin Dashboard" }}
+          options={{ title: "Admin Dashboard", headerBackVisible: false }}
         />
 
         {/* Booking & Map */}

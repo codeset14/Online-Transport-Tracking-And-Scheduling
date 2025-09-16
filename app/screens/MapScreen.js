@@ -1,59 +1,90 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import MapView, { Marker, Polyline } from 'react-native-maps';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, Platform, Animated } from 'react-native';
+import MapView, { Polyline, Marker, AnimatedRegion } from 'react-native-maps';
 import { COLORS } from '../../constants/colors';
-import axios from 'axios';
-
-const BASE_URL = 'http://YOUR_BACKEND_IP:PORT'; // replace with actual backend
 
 export default function MapScreen({ route }) {
-  const { busNumber } = route.params || {};
-  const [busRoute, setBusRoute] = useState([]);
-  const [eta, setEta] = useState(null);
+  const { busNumber, userType } = route.params || {};
+  const [eta, setEta] = useState(30); // dummy ETA
+  const markerRef = useRef(null);
 
-  const defaultRegion = {
-    latitude: 31.6340,
-    longitude: 74.8723,
-    latitudeDelta: 2,
-    longitudeDelta: 2,
-  };
+  // Predefined dummy route (Amritsar → Chandigarh)
+  const dummyRoute = [
+    { latitude: 31.6340, longitude: 74.8723 },
+    { latitude: 31.4000, longitude: 75.0000 },
+    { latitude: 31.2000, longitude: 75.2000 },
+    { latitude: 31.0000, longitude: 75.4000 },
+    { latitude: 30.8000, longitude: 75.6000 },
+    { latitude: 30.7333, longitude: 76.7794 }, // Chandigarh
+  ];
+
+  // Animated region for marker movement
+  const [markerRegion] = useState(
+    new AnimatedRegion({
+      latitude: dummyRoute[0].latitude,
+      longitude: dummyRoute[0].longitude,
+      latitudeDelta: 0.05,
+      longitudeDelta: 0.05,
+    })
+  );
 
   useEffect(() => {
-    if (!busNumber) return;
+    let index = 0;
 
-    // Fetch live route from backend
-    const fetchBusRoute = async () => {
-      try {
-        const res = await axios.get(`${BASE_URL}/api/bus/${busNumber}/route`);
-        setBusRoute(res.data.route); // should be array of {latitude, longitude}
-        setEta(res.data.eta); // backend provides ETA in minutes
-      } catch (err) {
-        console.error(err);
-        alert('Error fetching bus route');
-        setBusRoute([defaultRegion]);
-        setEta(null);
+    const moveMarker = () => {
+      index = (index + 1) % dummyRoute.length;
+      const nextCoord = dummyRoute[index];
+
+      if (Platform.OS === 'android') {
+        markerRegion.timing(nextCoord).start();
+      } else {
+        markerRegion.timing({
+          latitude: nextCoord.latitude,
+          longitude: nextCoord.longitude,
+          duration: 2000,
+        }).start();
       }
     };
 
-    fetchBusRoute();
-  }, [busNumber]);
+    const interval = setInterval(moveMarker, 2000); // move every 2s
+    return () => clearInterval(interval);
+  }, []);
+
+  const getMarkerColor = () => {
+    switch (userType) {
+      case 'driver': return COLORS.driver;
+      case 'admin': return COLORS.primary;
+      default: return COLORS.user;
+    }
+  };
 
   return (
     <View style={styles.container}>
-      <MapView style={styles.map} initialRegion={defaultRegion}>
-        {busRoute.length > 0 && (
-          <>
-            <Polyline coordinates={busRoute} strokeColor={COLORS.primary} strokeWidth={4} />
-            <Marker coordinate={busRoute[0]} title="Start" />
-            <Marker coordinate={busRoute[busRoute.length - 1]} title="Destination" />
-            <Marker coordinate={busRoute[0]} title={busNumber} pinColor={COLORS.user} />
-          </>
-        )}
+      <MapView
+        style={styles.map}
+        initialRegion={{
+          latitude: dummyRoute[0].latitude,
+          longitude: dummyRoute[0].longitude,
+          latitudeDelta: 2,
+          longitudeDelta: 2,
+        }}
+      >
+        <Polyline coordinates={dummyRoute} strokeColor={COLORS.primary} strokeWidth={4} />
+
+        <Marker.Animated
+          ref={markerRef}
+          coordinate={markerRegion}
+          title={busNumber || 'Dummy Bus'}
+          pinColor={getMarkerColor()}
+        />
+
+        <Marker coordinate={dummyRoute[0]} title="Start" />
+        <Marker coordinate={dummyRoute[dummyRoute.length - 1]} title="Destination" />
       </MapView>
 
-      {busNumber && eta && (
+      {busNumber && eta !== null && (
         <View style={styles.etaContainer}>
-          <Text style={styles.etaText}>🚌 {busNumber} — ETA: {eta} minutes</Text>
+          <Text style={styles.etaText}>🚌 {busNumber || 'Dummy Bus'} — ETA: {eta} min</Text>
         </View>
       )}
     </View>
@@ -77,5 +108,10 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-  etaText: { fontSize: 16, fontWeight: 'bold', color: COLORS.primary, textAlign: 'center' },
+  etaText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: COLORS.primary,
+    textAlign: 'center',
+  },
 });

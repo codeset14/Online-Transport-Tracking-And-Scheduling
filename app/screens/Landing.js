@@ -10,14 +10,38 @@ export default function Landing() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Welcome to BusTracker</Text>
-      <Button title="User" onPress={() => navigation.navigate('UserLogin')} color={COLORS.user} />
-      <Button title="Driver" onPress={() => navigation.navigate('DriverLogin')} color={COLORS.user} />
-      <Button title="Admin" onPress={() => navigation.navigate('AdminLogin')} color={COLORS.user} />
+
+      {/* Navigation buttons for User, Driver, Admin */}
+      <Button
+        title="User"
+        onPress={() => navigation.navigate('UserLogin')}
+        color={COLORS.user}
+      />
+      <Button
+        title="Driver"
+        onPress={() => navigation.navigate('DriverLogin')}
+        color={COLORS.user}  // All buttons now same as user color
+      />
+      <Button
+        title="Admin"
+        onPress={() => navigation.navigate('AdminLogin')}
+        color={COLORS.user}  // All buttons now same as user color
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex:1, justifyContent:'center', alignItems:'center', backgroundColor: COLORS.background },
-  title: { fontSize:28, fontWeight:'bold', color: COLORS.primary, marginBottom:32 }
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: COLORS.background,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: COLORS.primary,
+    marginBottom: 32,
+  },
 });

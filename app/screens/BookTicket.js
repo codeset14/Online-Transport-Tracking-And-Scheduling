@@ -1,39 +1,28 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import { COLORS } from '../../constants/colors';
-import axios from 'axios';
-
-// Backend base URL
-const BASE_URL = 'http://YOUR_BACKEND_IP:PORT'; // replace with your friend's backend URL
+import { bookBus } from '../../constants/api';
 
 export default function BookTicket({ route, navigation }) {
-  const { bus, from, to, date, userId } = route.params; // get additional info from previous screen
-  const [name, setName] = useState('');
-  const [seat, setSeat] = useState('');
+  const { bus, user } = route.params;
+  const [name, setName] = useState(user?.name || '');
+  const [seat, setSeat] = useState('1');
   const [loading, setLoading] = useState(false);
 
   const confirmBooking = async () => {
     if (!name || !seat) return alert('Please fill all details');
 
     setLoading(true);
-
     try {
-      const response = await axios.post(`${BASE_URL}/api/tickets/book`, {
-        busId: bus.id,
-        userId: userId || 'USER_ID', // replace with real logged-in user ID
-        passengerName: name,
-        seatNumber: seat,
-      });
-
-      if (response.data?.success) {
+      const booking = await bookBus(user?.id, bus.id, bus.routeId, seat, new Date().toISOString(), bus.fare);
+      if (booking) {
         alert(`Booking confirmed for ${name} on ${bus.name}, Seat: ${seat}`);
-        // Send booked bus info back to dashboard
-        navigation.navigate('UserDashboard', { bookedBus: response.data.bookedBus });
+        navigation.navigate('UserDashboard', { bookedBus: booking, user });
       } else {
         alert('Booking failed, try again!');
       }
-    } catch (error) {
-      console.error('Error booking ticket:', error);
+    } catch (err) {
+      console.error('Booking error:', err);
       alert('Booking failed, try again!');
     } finally {
       setLoading(false);
@@ -44,25 +33,9 @@ export default function BookTicket({ route, navigation }) {
     <View style={styles.container}>
       <Text style={styles.title}>Book Ticket</Text>
       <Text style={styles.busName}>{bus.name}</Text>
-      <TextInput
-        placeholder="Enter your name"
-        style={styles.input}
-        value={name}
-        onChangeText={setName}
-      />
-      <TextInput
-        placeholder="Preferred seat number"
-        style={styles.input}
-        value={seat}
-        onChangeText={setSeat}
-        keyboardType="numeric"
-      />
-      <Button
-        title={loading ? 'Booking...' : 'Confirm Booking'}
-        onPress={confirmBooking}
-        color={COLORS.user}
-        disabled={loading}
-      />
+      <TextInput placeholder="Enter your name" style={styles.input} value={name} onChangeText={setName} />
+      <TextInput placeholder="Preferred seat number" style={styles.input} value={seat} onChangeText={setSeat} keyboardType="numeric" />
+      <Button title={loading ? 'Booking...' : 'Confirm Booking'} onPress={confirmBooking} color={COLORS.user} disabled={loading} />
     </View>
   );
 }

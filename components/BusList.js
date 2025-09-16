@@ -1,19 +1,21 @@
 import React from 'react';
 import { View, FlatList, StyleSheet } from 'react-native';
 import BusCard from './BusCard';
+import { buses } from '../data/dummyBuses';
 
-export default function BusList({ buses, from, to, date, navigation }) {
-
+export default function BusList({ navigation }) {
   const handleSelectBus = (bus) => {
-    // Navigate to BookTicket screen with selected bus info
-    navigation.navigate('BookTicket', { bus, from, to, date });
+    navigation.navigate('MapScreen', {
+      busNumber: bus.id, // MUST use real ID for backend tracking
+      userType: 'user',
+    });
   };
 
   return (
     <View style={styles.container}>
       <FlatList
-        data={buses} // now coming from backend
-        keyExtractor={(item) => item.id.toString()} 
+        data={buses}
+        keyExtractor={(item) => item.id}
         renderItem={({ item }) => <BusCard bus={item} onSelect={handleSelectBus} />}
       />
     </View>
