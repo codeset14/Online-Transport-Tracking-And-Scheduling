@@ -1,0 +1,3 @@
+id,bus_number,bus_name,driver_id,route_id,capacity,status,current_location_lat,current_location_lng,updated_at
+1,PB01AB1234,Express 1,2,1,40,ACTIVE,0,0,2024-01-01T00:00:00
+2,PB02CD5678,Express 2,3,2,35,ACTIVE,0,0,2024-01-01T00:00:00
