@@ -12,7 +12,7 @@
 
 ## Overview
 
-This project is a complete **Online Transport Tracking and Scheduling System**, fully developed by me, including **both frontend and backend**. It allows efficient bus management, real-time tracking, ticket booking, and administrative control.
+This project is a complete **Online Transport Tracking and Scheduling System**, fully developed by me(ankit jadhav), including **both frontend and backend**. It allows efficient bus management, real-time tracking, ticket booking, and administrative control.
 
 ---
 
@@ -98,7 +98,7 @@ Team Contribution
 This is a team project, but the entire frontend and backend development — including all
 core features, APIs, UI, and real-time tracking —
 was implemented entirely by me (Ankit Jadhav).
- Other team members contributed in areas such as conceptualization, testing, and documentation.
+Other team members contributed in areas such as conceptualization, testing, and documentation.
 
 License
 This project is licensed under the MIT License. See LICENSE for details.
